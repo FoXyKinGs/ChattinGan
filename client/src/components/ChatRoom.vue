@@ -10,10 +10,14 @@
       )
       | {{ i.message }}
   .footer
-    form
+    form(
+      @submit.prevent='sendMessage()'
+    )
       input(
         type='text'
         placeholder='Text message here'
+        required
+        v-model='text'
       )
       button(
         type='submit'
@@ -31,12 +35,23 @@ const props = defineProps({
   }
 })
 
+const text = ref('')
 const chat = ref([])
 chat.value = null
 
 const socket = io(process.env.VUE_APP_DEFAULT_URL)
 
 socket.emit('join-room', localStorage.getItem('roomId'))
+
+function sendMessage () {
+  const data = {
+    from: localStorage.getItem('id'),
+    to: props.data.id.toString(),
+    msg: text.value
+  }
+  socket.emit('send-message', data)
+  text.value = ''
+}
 
 onMounted(() => {
   watch(() => {
