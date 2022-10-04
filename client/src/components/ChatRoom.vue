@@ -4,10 +4,11 @@
     p {{ props.data.username }}
   .content
     .chat(
-      v-for='i in 25'
-      :keys='i'
-      :class="i % 2 === 0 ? 'odd' : 'even'")
-      | Hallo
+      v-for='i in chat'
+      :keys='i.id'
+      :class="props.data.id == i.to_id? 'even' : ''"
+      )
+      | {{ i.message }}
   .footer
     form
       input(
@@ -21,12 +22,34 @@
 
 <script setup>
 /* eslint-disable */
-import { defineProps } from 'vue'
+import { defineProps, onMounted, ref, onDeactivated, watch } from 'vue'
+import io from 'socket.io-client'
 
 const props = defineProps({
   data: {
     Type: Object
   }
+})
+
+const chat = ref([])
+chat.value = null
+
+const socket = io(process.env.VUE_APP_DEFAULT_URL)
+
+socket.emit('join-room', localStorage.getItem('roomId'))
+
+onMounted(() => {
+  watch(() => {
+    return props.data.id
+  }, (newVal) => {
+    socket.emit('get-chat', { id_from: Number(localStorage.getItem('id')), id_to: props.data.id, room_id: localStorage.getItem('roomId') })
+
+    socket.on('res-get-chat', (value) => {
+      chat.value = value.rows
+    })
+  }, {
+    immediate: true
+  })
 })
 
 /* eslint-enable */
@@ -61,6 +84,7 @@ const props = defineProps({
       flex-direction: columns
       margin: 10px
       padding: 10px
+      border-radius: 15px
 
     .chat.even
       float: right

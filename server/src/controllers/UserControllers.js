@@ -79,7 +79,8 @@ module.exports = {
             })
     },
     getUsers: (req, res) => {
-        modelUsers()
+        const params = req.params
+        modelUsers(params.id)
             .then(response => {
                 res.status(200).send({
                     status: 200,

@@ -6,6 +6,6 @@ const { authentication } = require('../middlewares/auth')
 router
     .post('/register', userRegister)
     .post('/login', userLogin)
-    .get('/users', authentication, getUsers)
+    .get('/users/:id', authentication, getUsers)
 
 module.exports = router
