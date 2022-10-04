@@ -54,6 +54,8 @@ const submit = () => {
   axios.post('/login', form)
     .then(response => {
       localStorage.setItem('token', response.data.token)
+      localStorage.setItem('id', response.data.dataUser.id)
+      localStorage.setItem('roomId', response.data.dataUser.room_id)
       router.push('/')
     })
     .catch(err => {

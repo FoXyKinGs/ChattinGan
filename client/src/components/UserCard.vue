@@ -2,13 +2,14 @@
 .box(
   v-for="user in data"
   :keys='user.id'
+  @click='change(user)'
 )
   p {{ user.username }}
 </template>
 
 <script setup>
 /* eslint-disable */
-import { defineProps } from 'vue'
+import { defineProps, defineEmits } from 'vue'
 
 const props = defineProps({
   data: {
@@ -16,7 +17,11 @@ const props = defineProps({
   }
 })
 
-console.log(props.data)
+const emit = defineEmits(['changeRoom'])
+
+const change = (user) => {
+  emit('changeRoom', user)
+}
 
 /* eslint-enable */
 </script>
